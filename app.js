@@ -23,7 +23,19 @@
 	function setStore(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
 
 	// Seed data if empty
-	if (!getStore(STORAGE_KEYS.users)) setStore(STORAGE_KEYS.users, []);
+	const users = getStore(STORAGE_KEYS.users, []);
+	if (users.length === 0) {
+		// Thêm tài khoản admin mặc định
+		const adminUser = {
+			id: 'admin-001',
+			name: 'Administrator',
+			email: 'admin@hoc12.com',
+			password: 'admin123',
+			role: 'admin',
+			createdAt: Date.now()
+		};
+		setStore(STORAGE_KEYS.users, [adminUser]);
+	}
 	if (!getStore(STORAGE_KEYS.groups)) setStore(STORAGE_KEYS.groups, []);
 	if (!getStore(STORAGE_KEYS.exams)) setStore(STORAGE_KEYS.exams, []);
 	if (!getStore(STORAGE_KEYS.results)) setStore(STORAGE_KEYS.results, []);
@@ -53,13 +65,27 @@
 	}
 
 	function pageHome() {
+		const user = currentUser();
 		app.innerHTML = `
 			<section class="panel">
 				<h2>Chào mừng đến với Học 12</h2>
 				<p class="muted">Nền tảng tự học và luyện đề cho học sinh lớp 12.</p>
 				<div class="spacer"></div>
 				<div class="card">
-					<p>Hãy sử dụng thanh điều hướng phía trên để: đăng nhập/tạo tài khoản, vào mục nhóm, mở kiến thức Toán/Lý, tạo đề, hoặc xem bảng thành tích.</p>
+					<h4>🚀 Tính năng chính:</h4>
+					<ul>
+						<li><strong>Kiến thức:</strong> Toán 12, Vật lý 12, Lịch sử 12 (xem trực tiếp)</li>
+						<li><strong>Tạo đề thi:</strong> Tạo đề thủ công hoặc bằng AI</li>
+						<li><strong>Tài liệu:</strong> Upload và quản lý tài liệu học tập</li>
+						<li><strong>Bảng thành tích:</strong> Theo dõi kết quả học tập</li>
+					</ul>
+				</div>
+				<div class="spacer"></div>
+				<div class="card">
+					<h4>👤 Tài khoản mặc định:</h4>
+					<p><strong>Email:</strong> admin@hoc12.com</p>
+					<p><strong>Mật khẩu:</strong> admin123</p>
+					<p class="muted">Sử dụng tài khoản này để truy cập đầy đủ tính năng.</p>
 				</div>
 			</section>
 		`;
@@ -135,38 +161,6 @@
 		});
 	}
 
-	function pageGroups() {
-		const user = currentUser(); if (!user) { navigate('login'); return; }
-		const groups = getStore(STORAGE_KEYS.groups, []);
-		app.innerHTML = `
-			<section class="panel">
-				<div class="flex">
-					<h2>Nhóm</h2>
-					<span class="right"></span>
-					<button class="btn" id="btnNewGroup">Tạo nhóm</button>
-				</div>
-				<div class="spacer"></div>
-				<div id="groupsList" class="grid cols-2"></div>
-			</section>
-		`;
-		function render() {
-			const list = document.getElementById('groupsList');
-			const mineOrAll = groups.filter(g => g.members.includes(user.id));
-			list.innerHTML = mineOrAll.map(g => `
-				<div class="card">
-					<h4>${g.name}</h4>
-					<p class="muted">Thành viên: ${g.members.length}</p>
-				</div>
-			`).join('');
-		}
-		render();
-		document.getElementById('btnNewGroup').addEventListener('click', () => {
-			const name = prompt('Tên nhóm?');
-			if (!name) return;
-			const g = { id: uid(), name: name.trim(), ownerId: user.id, members: [user.id], createdAt: Date.now() };
-			groups.push(g); setStore(STORAGE_KEYS.groups, groups); render();
-		});
-	}
 
 	function renderAccordion(targetId, sections) {
 		const host = document.getElementById(targetId);
@@ -193,6 +187,7 @@
 		app.innerHTML = `
 			<section class="panel">
 				<h2>Kiến thức Toán 12 - Kết nối tri thức với cuộc sống</h2>
+				<div class="spacer"></div>
 				<div id="mathAccordion" class="accordion"></div>
 			</section>
 		`;
@@ -539,6 +534,7 @@
 		app.innerHTML = `
 			<section class="panel">
 				<h2>Kiến thức Vật lý 12 - Kết nối tri thức với cuộc sống</h2>
+				<div class="spacer"></div>
 				<div id="physAccordion" class="accordion"></div>
 			</section>
 		`;
@@ -942,6 +938,7 @@
 		app.innerHTML = `
 			<section class="panel">
 				<h2>Kiến thức Lịch sử 12 - Kết nối tri thức với cuộc sống</h2>
+				<div class="spacer"></div>
 				<div id="historyAccordion" class="accordion"></div>
 			</section>
 		`;
@@ -1595,7 +1592,6 @@
 		home: pageHome,
 		login: pageLogin,
 		signup: pageSignup,
-		groups: pageGroups,
 		math: pageMath,
 		physics: pagePhysics,
 		history: pageHistory,
