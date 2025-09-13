@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nền tảng học tập lớp 12</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="brand">Học 12</div>
+      <nav class="nav" id="nav">
+        <button data-route="home">Trang chủ</button>
+        <button data-route="login" id="nav-login">Đăng nhập</button>
+        <button data-route="signup" id="nav-signup">Tạo tài khoản</button>
+        <button data-route="groups" class="authed-only">Nhóm</button>
+        <div class="dropdown authed-only">
+          <button class="dropbtn">Kiến thức</button>
+          <div class="dropdown-content">
+            <button data-route="math">Toán 12</button>
+            <button data-route="physics">Lý 12</button>
+          </div>
+        </div>
+        <button data-route="exams" class="authed-only">Tạo đề</button>
+        <button data-route="results" class="authed-only">Bảng thành tích</button>
+        <button data-route="ai" class="authed-only">AI</button>
+        <button id="logoutBtn" class="authed-only danger">Đăngs xuất</button>
+      </nav>
+    </header>
+
+    <main id="app"></main>
+
+    <footer class="app-footer">© 2025 Học 12</footer>
+
+    <script src="app.js"></script>
+  </body>
+  </html>
+
+
