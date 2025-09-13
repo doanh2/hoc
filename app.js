@@ -190,13 +190,13 @@
 	function pageMath() {
 		app.innerHTML = `
 			<section class="panel">
-				<h2>Kiến thức Toán 12</h2>
+				<h2>Kiến thức Toán 12 - Kết nối tri thức với cuộc sống</h2>
 				<div id="mathAccordion" class="accordion"></div>
 			</section>
 		`;
 		const sections = [
 			{ 
-				title: '1. Ứng dụng đạo hàm', 
+				title: '1. Ứng dụng đạo hàm để khảo sát và vẽ đồ thị hàm số', 
 				content: `
 					<h4>Đạo hàm cơ bản:</h4>
 					<ul>
@@ -216,43 +216,72 @@
 						<li>(u/v)' = (u'.v - u.v')/v²</li>
 						<li>(u^n)' = n.u^(n-1).u'</li>
 					</ul>
-					<h4>Ứng dụng:</h4>
+					<h4>Ứng dụng đạo hàm:</h4>
 					<ul>
-						<li>Khảo sát sự biến thiên</li>
-						<li>Tìm cực trị</li>
-						<li>Tiệm cận</li>
-						<li>Vẽ đồ thị</li>
+						<li>Khảo sát sự biến thiên của hàm số</li>
+						<li>Tìm cực trị của hàm số</li>
+						<li>Tìm tiệm cận của đồ thị</li>
+						<li>Vẽ đồ thị hàm số</li>
+						<li>Giải bài toán thực tế</li>
+					</ul>
+					<h4>Khảo sát hàm số:</h4>
+					<ul>
+						<li>Tập xác định</li>
+						<li>Giới hạn và tiệm cận</li>
+						<li>Đạo hàm và sự biến thiên</li>
+						<li>Cực trị</li>
+						<li>Đồ thị</li>
 					</ul>
 				`
 			},
 			{ 
-				title: '2. Hàm số lũy thừa, mũ, logarit', 
+				title: '2. Hàm số lũy thừa, hàm số mũ và hàm số logarit', 
 				content: `
 					<h4>Hàm số lũy thừa:</h4>
 					<ul>
 						<li>y = x^α (α ∈ ℝ)</li>
+						<li>Tập xác định: D = ℝ (α nguyên dương), D = ℝ\{0} (α nguyên âm), D = [0,+∞) (α không nguyên)</li>
 						<li>Đạo hàm: (x^α)' = α.x^(α-1)</li>
+						<li>Đồ thị qua điểm (1,1)</li>
 					</ul>
 					<h4>Hàm số mũ:</h4>
 					<ul>
 						<li>y = a^x (a > 0, a ≠ 1)</li>
+						<li>Tập xác định: D = ℝ</li>
+						<li>Tập giá trị: T = (0,+∞)</li>
 						<li>Đạo hàm: (a^x)' = a^x.ln a</li>
 						<li>Đặc biệt: (e^x)' = e^x</li>
+						<li>Đồ thị luôn nằm phía trên trục Ox</li>
 					</ul>
 					<h4>Hàm số logarit:</h4>
 					<ul>
 						<li>y = log_a(x) (a > 0, a ≠ 1)</li>
+						<li>Tập xác định: D = (0,+∞)</li>
+						<li>Tập giá trị: T = ℝ</li>
 						<li>Đạo hàm: (log_a x)' = 1/(x.ln a)</li>
 						<li>Đặc biệt: (ln x)' = 1/x</li>
+						<li>Đồ thị luôn nằm bên phải trục Oy</li>
 					</ul>
-					<h4>Tính chất:</h4>
+					<h4>Tính chất lũy thừa:</h4>
 					<ul>
 						<li>a^x.a^y = a^(x+y)</li>
 						<li>a^x/a^y = a^(x-y)</li>
 						<li>(a^x)^y = a^(xy)</li>
+						<li>(ab)^x = a^x.b^x</li>
+					</ul>
+					<h4>Tính chất logarit:</h4>
+					<ul>
 						<li>log_a(xy) = log_a(x) + log_a(y)</li>
 						<li>log_a(x/y) = log_a(x) - log_a(y)</li>
 						<li>log_a(x^y) = y.log_a(x)</li>
+						<li>log_a(x) = log_b(x)/log_b(a)</li>
+					</ul>
+					<h4>Phương trình và bất phương trình:</h4>
+					<ul>
+						<li>a^x = b ⇔ x = log_a(b)</li>
+						<li>log_a(x) = b ⇔ x = a^b</li>
+						<li>a^x > a^y ⇔ x > y (nếu a > 1)</li>
+						<li>a^x > a^y ⇔ x < y (nếu 0 < a < 1)</li>
 					</ul>
 				`
 			},
@@ -269,22 +298,34 @@
 						<li>∫cos x dx = sin x + C</li>
 						<li>∫1/cos²x dx = tan x + C</li>
 						<li>∫1/sin²x dx = -cot x + C</li>
+						<li>∫1/√(1-x²) dx = arcsin x + C</li>
+						<li>∫1/(1+x²) dx = arctan x + C</li>
 					</ul>
 					<h4>Tính chất nguyên hàm:</h4>
 					<ul>
 						<li>∫[f(x) ± g(x)]dx = ∫f(x)dx ± ∫g(x)dx</li>
 						<li>∫k.f(x)dx = k.∫f(x)dx</li>
+						<li>∫f'(x)dx = f(x) + C</li>
+					</ul>
+					<h4>Phương pháp tính nguyên hàm:</h4>
+					<ul>
+						<li>Phương pháp đổi biến số</li>
+						<li>Phương pháp tích phân từng phần</li>
+						<li>Phương pháp phân tích thành tổng</li>
 					</ul>
 					<h4>Tích phân xác định:</h4>
 					<ul>
 						<li>∫[a→b] f(x)dx = F(b) - F(a)</li>
 						<li>∫[a→b] f(x)dx = -∫[b→a] f(x)dx</li>
 						<li>∫[a→c] f(x)dx = ∫[a→b] f(x)dx + ∫[b→c] f(x)dx</li>
+						<li>∫[a→b] k.f(x)dx = k.∫[a→b] f(x)dx</li>
 					</ul>
 					<h4>Ứng dụng tích phân:</h4>
 					<ul>
-						<li>Diện tích hình phẳng</li>
+						<li>Diện tích hình phẳng giới hạn bởi đồ thị</li>
 						<li>Thể tích khối tròn xoay</li>
+						<li>Quãng đường và vận tốc</li>
+						<li>Giải bài toán thực tế</li>
 					</ul>
 				`
 			},
@@ -348,30 +389,143 @@
 				`
 			},
 			{ 
-				title: '6. Phương pháp tọa độ trong không gian', 
+				title: '4. Vectơ và hệ trục tọa độ trong không gian', 
 				content: `
+					<h4>Hệ trục tọa độ Oxyz:</h4>
+					<ul>
+						<li>Ba trục Ox, Oy, Oz vuông góc với nhau</li>
+						<li>Điểm O là gốc tọa độ</li>
+						<li>Vectơ đơn vị: i⃗, j⃗, k⃗</li>
+						<li>M(x,y,z): tọa độ điểm M</li>
+					</ul>
 					<h4>Tọa độ vectơ:</h4>
 					<ul>
-						<li>u⃗ = (x, y, z)</li>
+						<li>u⃗ = (x, y, z) = xi⃗ + yj⃗ + zk⃗</li>
 						<li>|u⃗| = √(x² + y² + z²)</li>
 						<li>u⃗ + v⃗ = (x₁ + x₂, y₁ + y₂, z₁ + z₂)</li>
 						<li>k.u⃗ = (kx, ky, kz)</li>
 						<li>u⃗.v⃗ = x₁x₂ + y₁y₂ + z₁z₂</li>
+						<li>cos(u⃗,v⃗) = (u⃗.v⃗)/(|u⃗|.|v⃗|)</li>
 					</ul>
+					<h4>Tích có hướng:</h4>
+					<ul>
+						<li>[u⃗,v⃗] = (y₁z₂ - y₂z₁, z₁x₂ - z₂x₁, x₁y₂ - x₂y₁)</li>
+						<li>|[u⃗,v⃗]| = |u⃗|.|v⃗|.sin(u⃗,v⃗)</li>
+						<li>[u⃗,v⃗] ⊥ u⃗ và [u⃗,v⃗] ⊥ v⃗</li>
+					</ul>
+					<h4>Khoảng cách và góc:</h4>
+					<ul>
+						<li>d(A,B) = √[(x₂-x₁)² + (y₂-y₁)² + (z₂-z₁)²]</li>
+						<li>Góc giữa hai vectơ: cos φ = (u⃗.v⃗)/(|u⃗|.|v⃗|)</li>
+						<li>Khoảng cách từ điểm đến mặt phẳng</li>
+					</ul>
+				`
+			},
+			{ 
+				title: '5. Phương pháp tọa độ trong không gian', 
+				content: `
 					<h4>Phương trình mặt phẳng:</h4>
 					<ul>
 						<li>Ax + By + Cz + D = 0</li>
 						<li>n⃗ = (A, B, C): vectơ pháp tuyến</li>
+						<li>Phương trình mặt phẳng qua 3 điểm</li>
+						<li>Phương trình mặt phẳng theo đoạn chắn</li>
 					</ul>
 					<h4>Phương trình đường thẳng:</h4>
 					<ul>
 						<li>Tham số: x = x₀ + at, y = y₀ + bt, z = z₀ + ct</li>
 						<li>Chính tắc: (x - x₀)/a = (y - y₀)/b = (z - z₀)/c</li>
+						<li>u⃗ = (a, b, c): vectơ chỉ phương</li>
+						<li>Phương trình đường thẳng qua 2 điểm</li>
 					</ul>
 					<h4>Phương trình mặt cầu:</h4>
 					<ul>
 						<li>(x - a)² + (y - b)² + (z - c)² = r²</li>
 						<li>Tâm I(a, b, c), bán kính r</li>
+						<li>x² + y² + z² + 2Ax + 2By + 2Cz + D = 0</li>
+					</ul>
+					<h4>Vị trí tương đối:</h4>
+					<ul>
+						<li>Hai mặt phẳng: song song, cắt nhau, trùng nhau</li>
+						<li>Đường thẳng và mặt phẳng: song song, cắt nhau, nằm trong</li>
+						<li>Hai đường thẳng: song song, cắt nhau, chéo nhau</li>
+					</ul>
+					<h4>Khoảng cách và góc:</h4>
+					<ul>
+						<li>Khoảng cách từ điểm đến mặt phẳng</li>
+						<li>Khoảng cách từ điểm đến đường thẳng</li>
+						<li>Khoảng cách giữa hai đường thẳng chéo nhau</li>
+						<li>Góc giữa hai mặt phẳng</li>
+						<li>Góc giữa đường thẳng và mặt phẳng</li>
+					</ul>
+				`
+			},
+			{ 
+				title: '6. Số phức', 
+				content: `
+					<h4>Định nghĩa:</h4>
+					<ul>
+						<li>z = a + bi (a, b ∈ ℝ, i² = -1)</li>
+						<li>a: phần thực, b: phần ảo</li>
+						<li>z = a - bi: số phức liên hợp</li>
+						<li>|z| = √(a² + b²): môđun</li>
+					</ul>
+					<h4>Dạng lượng giác:</h4>
+					<ul>
+						<li>z = r(cos φ + i.sin φ)</li>
+						<li>r = |z| = √(a² + b²)</li>
+						<li>φ = arg(z): argument</li>
+						<li>a = r.cos φ, b = r.sin φ</li>
+					</ul>
+					<h4>Phép toán:</h4>
+					<ul>
+						<li>(a + bi) + (c + di) = (a + c) + (b + d)i</li>
+						<li>(a + bi) - (c + di) = (a - c) + (b - d)i</li>
+						<li>(a + bi)(c + di) = (ac - bd) + (ad + bc)i</li>
+						<li>(a + bi)/(c + di) = [(ac + bd) + (bc - ad)i]/(c² + d²)</li>
+					</ul>
+					<h4>Công thức Moivre:</h4>
+					<ul>
+						<li>[r(cos φ + i.sin φ)]^n = r^n(cos nφ + i.sin nφ)</li>
+						<li>z^n = r^n(cos nφ + i.sin nφ)</li>
+					</ul>
+					<h4>Căn bậc n của số phức:</h4>
+					<ul>
+						<li>n căn bậc n của z = r(cos φ + i.sin φ)</li>
+						<li>w_k = r^(1/n)[cos(φ + 2kπ)/n + i.sin(φ + 2kπ)/n]</li>
+						<li>k = 0, 1, 2, ..., n-1</li>
+					</ul>
+				`
+			},
+			{ 
+				title: '7. Xác suất có điều kiện', 
+				content: `
+					<h4>Xác suất có điều kiện:</h4>
+					<ul>
+						<li>P(A|B) = P(A∩B)/P(B) (P(B) > 0)</li>
+						<li>P(A∩B) = P(A|B).P(B) = P(B|A).P(A)</li>
+					</ul>
+					<h4>Công thức xác suất toàn phần:</h4>
+					<ul>
+						<li>P(A) = P(A|B₁).P(B₁) + P(A|B₂).P(B₂) + ... + P(A|Bₙ).P(Bₙ)</li>
+						<li>Với B₁, B₂, ..., Bₙ là hệ đầy đủ các biến cố</li>
+					</ul>
+					<h4>Công thức Bayes:</h4>
+					<ul>
+						<li>P(Bᵢ|A) = P(A|Bᵢ).P(Bᵢ)/P(A)</li>
+						<li>Ứng dụng trong y học, kinh tế, khoa học</li>
+					</ul>
+					<h4>Biến cố độc lập:</h4>
+					<ul>
+						<li>A và B độc lập ⇔ P(A∩B) = P(A).P(B)</li>
+						<li>A và B độc lập ⇔ P(A|B) = P(A)</li>
+					</ul>
+					<h4>Ứng dụng thực tế:</h4>
+					<ul>
+						<li>Chẩn đoán y tế</li>
+						<li>Kiểm tra chất lượng sản phẩm</li>
+						<li>Dự báo thời tiết</li>
+						<li>Phân tích rủi ro tài chính</li>
 					</ul>
 				`
 			}
@@ -382,13 +536,145 @@
 	function pagePhysics() {
 		app.innerHTML = `
 			<section class="panel">
-				<h2>Kiến thức Vật lý 12</h2>
+				<h2>Kiến thức Vật lý 12 - Kết nối tri thức với cuộc sống</h2>
 				<div id="physAccordion" class="accordion"></div>
 			</section>
 		`;
 		const sections = [
 			{ 
-				title: '1. Dao động cơ', 
+				title: '1. Vật lý nhiệt', 
+				content: `
+					<h4>Cấu trúc của chất:</h4>
+					<ul>
+						<li>Chất rắn: cấu trúc tinh thể, liên kết mạnh</li>
+						<li>Chất lỏng: cấu trúc vô định hình, liên kết yếu</li>
+						<li>Chất khí: phân tử tự do, chuyển động hỗn loạn</li>
+					</ul>
+					<h4>Sự chuyển thể:</h4>
+					<ul>
+						<li>Nóng chảy: rắn → lỏng</li>
+						<li>Đông đặc: lỏng → rắn</li>
+						<li>Bay hơi: lỏng → khí</li>
+						<li>Ngưng tụ: khí → lỏng</li>
+						<li>Thăng hoa: rắn → khí</li>
+					</ul>
+					<h4>Nội năng:</h4>
+					<ul>
+						<li>U = W + Q (định luật I nhiệt động lực học)</li>
+						<li>ΔU = ΔW + ΔQ</li>
+						<li>W: công, Q: nhiệt lượng</li>
+					</ul>
+					<h4>Nhiệt độ và thang nhiệt độ:</h4>
+					<ul>
+						<li>Nhiệt kế: đo nhiệt độ</li>
+						<li>Thang Celsius: 0°C (nước đá), 100°C (nước sôi)</li>
+						<li>Thang Kelvin: T(K) = t(°C) + 273.15</li>
+					</ul>
+					<h4>Nhiệt dung và nhiệt chuyển thể:</h4>
+					<ul>
+						<li>Q = mcΔt (nhiệt dung riêng)</li>
+						<li>Q = mL (nhiệt nóng chảy/hóa hơi)</li>
+						<li>c: nhiệt dung riêng, L: nhiệt chuyển thể riêng</li>
+					</ul>
+				`
+			},
+			{ 
+				title: '2. Khí lý tưởng', 
+				content: `
+					<h4>Mô hình động học phân tử:</h4>
+					<ul>
+						<li>Phân tử chuyển động hỗn loạn</li>
+						<li>Va chạm đàn hồi</li>
+						<li>Kích thước phân tử << khoảng cách</li>
+						<li>Không có lực tương tác xa</li>
+					</ul>
+					<h4>Định luật Boyle:</h4>
+					<ul>
+						<li>pV = const (T = const)</li>
+						<li>p₁V₁ = p₂V₂</li>
+						<li>Áp suất tỉ lệ nghịch với thể tích</li>
+					</ul>
+					<h4>Định luật Charles:</h4>
+					<ul>
+						<li>V/T = const (p = const)</li>
+						<li>V₁/T₁ = V₂/T₂</li>
+						<li>Thể tích tỉ lệ thuận với nhiệt độ tuyệt đối</li>
+					</ul>
+					<h4>Phương trình trạng thái khí lý tưởng:</h4>
+					<ul>
+						<li>pV = nRT</li>
+						<li>pV = (m/M)RT</li>
+						<li>R = 8.314 J/(mol.K): hằng số khí</li>
+						<li>n: số mol, m: khối lượng, M: khối lượng mol</li>
+					</ul>
+					<h4>Áp suất theo mô hình động học:</h4>
+					<ul>
+						<li>p = (1/3)nmv²</li>
+						<li>n: mật độ phân tử</li>
+						<li>m: khối lượng phân tử</li>
+						<li>v²: vận tốc bình phương trung bình</li>
+					</ul>
+					<h4>Động năng phân tử và nhiệt độ:</h4>
+					<ul>
+						<li>W_đ = (3/2)kT</li>
+						<li>k = R/N_A: hằng số Boltzmann</li>
+						<li>N_A: số Avogadro</li>
+					</ul>
+				`
+			},
+			{ 
+				title: '3. Từ trường', 
+				content: `
+					<h4>Từ trường:</h4>
+					<ul>
+						<li>B⃗: vectơ cảm ứng từ</li>
+						<li>Đơn vị: Tesla (T)</li>
+						<li>Đường sức từ: đường cong kín</li>
+						<li>Chiều: từ cực Bắc đến cực Nam</li>
+					</ul>
+					<h4>Lực từ tác dụng lên dây dẫn:</h4>
+					<ul>
+						<li>F = BIl.sin α</li>
+						<li>F = BIl (α = 90°)</li>
+						<li>I: cường độ dòng điện</li>
+						<li>l: chiều dài dây dẫn</li>
+					</ul>
+					<h4>Lực Lorentz:</h4>
+					<ul>
+						<li>F = qvB.sin α</li>
+						<li>F = qvB (α = 90°)</li>
+						<li>q: điện tích, v: vận tốc</li>
+						<li>Quỹ đạo: đường tròn</li>
+					</ul>
+					<h4>Từ thông:</h4>
+					<ul>
+						<li>Φ = BS.cos α</li>
+						<li>Φ = B⃗.S⃗</li>
+						<li>Đơn vị: Weber (Wb)</li>
+					</ul>
+					<h4>Hiện tượng cảm ứng điện từ:</h4>
+					<ul>
+						<li>Định luật Faraday: e = -dΦ/dt</li>
+						<li>Định luật Lenz: dòng điện cảm ứng chống lại nguyên nhân sinh ra nó</li>
+						<li>Suất điện động cảm ứng</li>
+					</ul>
+					<h4>Máy phát điện xoay chiều:</h4>
+					<ul>
+						<li>e = E₀.sin(ωt + φ)</li>
+						<li>E₀ = NBSω</li>
+						<li>N: số vòng dây, S: diện tích khung</li>
+					</ul>
+					<h4>Điện từ trường và sóng điện từ:</h4>
+					<ul>
+						<li>Điện trường biến thiên → từ trường</li>
+						<li>Từ trường biến thiên → điện trường</li>
+						<li>Sóng điện từ: lan truyền trong không gian</li>
+						<li>c = 1/√(ε₀μ₀) = 3×10⁸ m/s</li>
+					</ul>
+				`
+			},
+			{ 
+				title: '4. Dao động cơ', 
 				content: `
 					<h4>Dao động điều hòa:</h4>
 					<ul>
@@ -396,7 +682,7 @@
 						<li>v = -ωA.sin(ωt + φ)</li>
 						<li>a = -ω²A.cos(ωt + φ) = -ω²x</li>
 						<li>ω = 2π/T = 2πf</li>
-						<li>A = x_max, φ: pha ban đầu</li>
+						<li>A: biên độ, φ: pha ban đầu</li>
 					</ul>
 					<h4>Con lắc lò xo:</h4>
 					<ul>
@@ -404,6 +690,7 @@
 						<li>f = 1/T = (1/2π)√(k/m)</li>
 						<li>ω = √(k/m)</li>
 						<li>W = (1/2)kA² = (1/2)mv² + (1/2)kx²</li>
+						<li>W_đ = (1/2)mv², W_t = (1/2)kx²</li>
 					</ul>
 					<h4>Con lắc đơn:</h4>
 					<ul>
@@ -411,16 +698,24 @@
 						<li>f = (1/2π)√(g/l)</li>
 						<li>ω = √(g/l)</li>
 						<li>s = s₀.cos(ωt + φ)</li>
+						<li>Điều kiện: góc nhỏ (α < 10°)</li>
 					</ul>
 					<h4>Dao động tắt dần:</h4>
 					<ul>
 						<li>x = A₀.e^(-γt).cos(ωt + φ)</li>
 						<li>γ = b/(2m): hệ số tắt dần</li>
+						<li>Biên độ giảm dần theo thời gian</li>
+					</ul>
+					<h4>Dao động cưỡng bức và cộng hưởng:</h4>
+					<ul>
+						<li>Dao động cưỡng bức: tần số bằng tần số ngoại lực</li>
+						<li>Cộng hưởng: f = f₀ (tần số riêng)</li>
+						<li>Biên độ cực đại khi cộng hưởng</li>
 					</ul>
 				`
 			},
 			{ 
-				title: '2. Sóng cơ và sóng âm', 
+				title: '5. Sóng cơ và sóng âm', 
 				content: `
 					<h4>Sóng cơ:</h4>
 					<ul>
@@ -428,24 +723,35 @@
 						<li>k = 2π/λ: số sóng</li>
 						<li>v = λf = λ/T</li>
 						<li>v = √(F/μ) (dây đàn hồi)</li>
+						<li>v = √(E/ρ) (thanh đàn hồi)</li>
 					</ul>
 					<h4>Giao thoa sóng:</h4>
 					<ul>
 						<li>Δφ = 2πd/λ</li>
 						<li>Cực đại: d = kλ (k ∈ ℤ)</li>
 						<li>Cực tiểu: d = (k + 1/2)λ</li>
+						<li>Khoảng cách giữa 2 cực đại: λ/2</li>
 					</ul>
 					<h4>Sóng dừng:</h4>
 					<ul>
 						<li>λ = 2l/n (n: số bụng)</li>
 						<li>f = nv/(2l)</li>
 						<li>Nút: u = 0, Bụng: u = ±A</li>
+						<li>Khoảng cách nút-bụng: λ/4</li>
 					</ul>
 					<h4>Sóng âm:</h4>
 					<ul>
 						<li>I = P/(4πr²)</li>
 						<li>L = 10.log(I/I₀) (dB)</li>
-						<li>f' = f(v ± v₀)/(v ∓ v_s)</li>
+						<li>I₀ = 10⁻¹² W/m²: ngưỡng nghe</li>
+						<li>f' = f(v ± v₀)/(v ∓ v_s) (hiệu ứng Doppler)</li>
+						<li>Âm thanh: 16Hz - 20000Hz</li>
+					</ul>
+					<h4>Đặc trưng sinh lý của âm:</h4>
+					<ul>
+						<li>Độ cao: tần số</li>
+						<li>Độ to: cường độ âm</li>
+						<li>Âm sắc: dạng sóng</li>
 					</ul>
 				`
 			},
@@ -557,31 +863,49 @@
 				`
 			},
 			{ 
-				title: '7. Hạt nhân nguyên tử', 
+				title: '6. Vật lý hạt nhân', 
 				content: `
 					<h4>Cấu tạo hạt nhân:</h4>
 					<ul>
 						<li>Z: số proton, N: số neutron</li>
 						<li>A = Z + N: số khối</li>
-						<li>m = Z.m_p + N.m_n - Δm</li>
+						<li>Ký hiệu: ᴬX (X: ký hiệu nguyên tố)</li>
+						<li>Bán kính hạt nhân: R = R₀.A^(1/3)</li>
 					</ul>
 					<h4>Năng lượng liên kết:</h4>
 					<ul>
 						<li>E_lk = Δm.c²</li>
-						<li>ε = E_lk/A</li>
+						<li>ε = E_lk/A: năng lượng liên kết riêng</li>
 						<li>Δm = Zm_p + Nm_n - m</li>
+						<li>Hạt nhân bền: ε lớn</li>
 					</ul>
-					<h4>Phóng xạ:</h4>
+					<h4>Hiện tượng phóng xạ:</h4>
+					<ul>
+						<li>Phóng xạ α: hạt nhân mẹ → hạt nhân con + hạt α</li>
+						<li>Phóng xạ β⁻: n → p + e⁻ + ν̄</li>
+						<li>Phóng xạ β⁺: p → n + e⁺ + ν</li>
+						<li>Phóng xạ γ: hạt nhân kích thích → hạt nhân bền + γ</li>
+					</ul>
+					<h4>Định luật phóng xạ:</h4>
 					<ul>
 						<li>N = N₀.e^(-λt)</li>
-						<li>T = ln2/λ</li>
-						<li>H = λN = H₀.e^(-λt)</li>
+						<li>T = ln2/λ: chu kỳ bán rã</li>
+						<li>H = λN = H₀.e^(-λt): độ phóng xạ</li>
+						<li>m = m₀.e^(-λt): khối lượng còn lại</li>
 					</ul>
 					<h4>Phản ứng hạt nhân:</h4>
 					<ul>
+						<li>Phân hạch: hạt nhân nặng → hạt nhân nhẹ + năng lượng</li>
+						<li>Nhiệt hạch: hạt nhân nhẹ → hạt nhân nặng + năng lượng</li>
 						<li>Q = (m_trước - m_sau).c²</li>
-						<li>Q > 0: tỏa năng lượng</li>
-						<li>Q < 0: thu năng lượng</li>
+						<li>Q > 0: tỏa năng lượng, Q < 0: thu năng lượng</li>
+					</ul>
+					<h4>Ứng dụng:</h4>
+					<ul>
+						<li>Năng lượng hạt nhân</li>
+						<li>Y học hạt nhân</li>
+						<li>Định tuổi bằng phóng xạ</li>
+						<li>Chẩn đoán và điều trị</li>
 					</ul>
 				`
 			},
@@ -610,6 +934,205 @@
 			}
 		];
 		renderAccordion('physAccordion', sections);
+	}
+
+	function pageHistory() {
+		app.innerHTML = `
+			<section class="panel">
+				<h2>Kiến thức Lịch sử 12 - Kết nối tri thức với cuộc sống</h2>
+				<div id="historyAccordion" class="accordion"></div>
+			</section>
+		`;
+		const sections = [
+			{ 
+				title: '1. Lịch sử thế giới từ 1945 đến 2000', 
+				content: `
+					<h4>Trật tự thế giới mới sau Chiến tranh thế giới thứ hai:</h4>
+					<ul>
+						<li>Hội nghị Yalta (2/1945): Stalin, Roosevelt, Churchill</li>
+						<li>Hội nghị Potsdam (7-8/1945): Truman, Stalin, Attlee</li>
+						<li>Thành lập Liên Hợp Quốc (10/1945)</li>
+						<li>Chiến tranh lạnh bắt đầu (1947-1991)</li>
+					</ul>
+					<h4>Chiến tranh lạnh:</h4>
+					<ul>
+						<li>Học thuyết Truman (1947): ngăn chặn chủ nghĩa cộng sản</li>
+						<li>Kế hoạch Marshall (1947): viện trợ kinh tế cho Tây Âu</li>
+						<li>Khối NATO (1949) vs Khối Hiệp ước Warsaw (1955)</li>
+						<li>Cuộc khủng hoảng Berlin (1948-1949)</li>
+						<li>Chiến tranh Triều Tiên (1950-1953)</li>
+					</ul>
+					<h4>Phong trào giải phóng dân tộc:</h4>
+					<ul>
+						<li>Châu Á: Ấn Độ (1947), Indonesia (1949), Việt Nam (1954)</li>
+						<li>Châu Phi: Ghana (1957), Algeria (1962)</li>
+						<li>Châu Mỹ Latin: Cuba (1959), Nicaragua (1979)</li>
+					</ul>
+					<h4>Cuộc cách mạng khoa học - kỹ thuật:</h4>
+					<ul>
+						<li>Đặc điểm: bùng nổ thông tin, tự động hóa</li>
+						<li>Thành tựu: năng lượng nguyên tử, máy tính, vũ trụ</li>
+						<li>Tác động: thay đổi cơ cấu kinh tế, xã hội</li>
+					</ul>
+				`
+			},
+			{ 
+				title: '2. Lịch sử Việt Nam từ 1919 đến 1975', 
+				content: `
+					<h4>Phong trào dân tộc dân chủ (1919-1930):</h4>
+					<ul>
+						<li>Phong trào yêu nước của tư sản dân tộc</li>
+						<li>Phong trào công nhân và nông dân</li>
+						<li>Phong trào cách mạng theo khuynh hướng vô sản</li>
+						<li>Nguyễn Ái Quốc và vai trò truyền bá chủ nghĩa Mác-Lênin</li>
+					</ul>
+					<h4>Đảng Cộng sản Việt Nam ra đời (1930):</h4>
+					<ul>
+						<li>Hội nghị thành lập Đảng (3/2/1930)</li>
+						<li>Cương lĩnh chính trị đầu tiên</li>
+						<li>Luận cương chính trị (10/1930)</li>
+						<li>Phong trào Xô viết Nghệ Tĩnh (1930-1931)</li>
+					</ul>
+					<h4>Cuộc vận động dân chủ (1936-1939):</h4>
+					<ul>
+						<li>Chủ trương mới của Đảng</li>
+						<li>Mặt trận Dân chủ Đông Dương</li>
+						<li>Phong trào đấu tranh công khai, hợp pháp</li>
+					</ul>
+					<h4>Cách mạng tháng Tám (1945):</h4>
+					<ul>
+						<li>Hội nghị Trung ương 8 (5/1941)</li>
+						<li>Việt Minh ra đời</li>
+						<li>Cao trào kháng Nhật cứu nước</li>
+						<li>Tổng khởi nghĩa tháng Tám</li>
+						<li>Tuyên ngôn Độc lập (2/9/1945)</li>
+					</ul>
+					<h4>Cuộc kháng chiến chống Pháp (1945-1954):</h4>
+					<ul>
+						<li>Toàn quốc kháng chiến (19/12/1946)</li>
+						<li>Chiến dịch Việt Bắc (1947)</li>
+						<li>Chiến dịch Biên giới (1950)</li>
+						<li>Chiến dịch Điện Biên Phủ (1954)</li>
+						<li>Hiệp định Geneva (1954)</li>
+					</ul>
+				`
+			},
+			{ 
+				title: '3. Xây dựng CNXH ở miền Bắc và đấu tranh thống nhất đất nước (1954-1975)', 
+				content: `
+					<h4>Xây dựng CNXH ở miền Bắc:</h4>
+					<ul>
+						<li>Khôi phục kinh tế (1954-1957)</li>
+						<li>Cải tạo XHCN (1958-1960)</li>
+						<li>Kế hoạch 5 năm lần thứ nhất (1961-1965)</li>
+						<li>Chiến đấu chống chiến tranh phá hoại của Mỹ</li>
+					</ul>
+					<h4>Đấu tranh chống Mỹ ở miền Nam:</h4>
+					<ul>
+						<li>Phong trào Đồng khởi (1959-1960)</li>
+						<li>Mặt trận Dân tộc Giải phóng miền Nam (1960)</li>
+						<li>Chiến lược "Chiến tranh đặc biệt" của Mỹ (1961-1965)</li>
+						<li>Chiến lược "Chiến tranh cục bộ" (1965-1968)</li>
+						<li>Tổng tiến công và nổi dậy Tết Mậu Thân (1968)</li>
+					</ul>
+					<h4>Việt Nam hóa chiến tranh (1969-1973):</h4>
+					<ul>
+						<li>Chiến lược "Việt Nam hóa chiến tranh" của Nixon</li>
+						<li>Đánh bại chiến lược này</li>
+						<li>Hiệp định Paris (1973)</li>
+					</ul>
+					<h4>Giải phóng hoàn toàn miền Nam (1975):</h4>
+					<ul>
+						<li>Chiến dịch Tây Nguyên (3/1975)</li>
+						<li>Chiến dịch Huế - Đà Nẵng (3-4/1975)</li>
+						<li>Chiến dịch Hồ Chí Minh (4/1975)</li>
+						<li>Thống nhất đất nước</li>
+					</ul>
+				`
+			},
+			{ 
+				title: '4. Việt Nam trong những năm đầu sau đại thắng mùa Xuân 1975', 
+				content: `
+					<h4>Khôi phục và phát triển kinh tế - xã hội:</h4>
+					<ul>
+						<li>Khắc phục hậu quả chiến tranh</li>
+						<li>Thống nhất đất nước về mặt nhà nước</li>
+						<li>Đại hội Đảng lần thứ IV (1976)</li>
+						<li>Kế hoạch 5 năm 1976-1980</li>
+					</ul>
+					<h4>Đấu tranh bảo vệ Tổ quốc:</h4>
+					<ul>
+						<li>Chiến tranh biên giới Tây Nam</li>
+						<li>Chiến tranh biên giới phía Bắc</li>
+						<li>Bảo vệ chủ quyền biển đảo</li>
+					</ul>
+					<h4>Đổi mới đất nước:</h4>
+					<ul>
+						<li>Đại hội Đảng lần thứ VI (1986)</li>
+						<li>Đường lối đổi mới</li>
+						<li>Thành tựu đổi mới</li>
+						<li>Vai trò lãnh đạo của Đảng</li>
+					</ul>
+				`
+			},
+			{ 
+				title: '5. Những kiến thức trọng tâm lịch sử 11-12', 
+				content: `
+					<h4>Các sự kiện lịch sử quan trọng:</h4>
+					<ul>
+						<li>Cách mạng tháng Mười Nga (1917)</li>
+						<li>Chiến tranh thế giới thứ nhất (1914-1918)</li>
+						<li>Chiến tranh thế giới thứ hai (1939-1945)</li>
+						<li>Cách mạng tháng Tám (1945)</li>
+						<li>Chiến dịch Điện Biên Phủ (1954)</li>
+						<li>Chiến dịch Hồ Chí Minh (1975)</li>
+					</ul>
+					<h4>Đặc điểm các giai đoạn lịch sử:</h4>
+					<ul>
+						<li>Giai đoạn 1919-1930: phong trào dân tộc dân chủ</li>
+						<li>Giai đoạn 1930-1945: cách mạng dân tộc dân chủ nhân dân</li>
+						<li>Giai đoạn 1945-1975: kháng chiến chống ngoại xâm</li>
+						<li>Giai đoạn 1975-nay: xây dựng và bảo vệ Tổ quốc</li>
+					</ul>
+					<h4>Vai trò của các nhân vật lịch sử:</h4>
+					<ul>
+						<li>Nguyễn Ái Quốc - Hồ Chí Minh</li>
+						<li>Võ Nguyên Giáp</li>
+						<li>Lê Duẩn</li>
+						<li>Các anh hùng dân tộc khác</li>
+					</ul>
+				`
+			},
+			{ 
+				title: '6. Sơ đồ tư duy lịch sử 12', 
+				content: `
+					<h4>Mô hình tư duy lịch sử:</h4>
+					<ul>
+						<li>Chủ thể: ai làm gì, khi nào, ở đâu</li>
+						<li>Nguyên nhân: tại sao xảy ra sự kiện</li>
+						<li>Diễn biến: quá trình diễn ra như thế nào</li>
+						<li>Kết quả: kết cục ra sao</li>
+						<li>Ý nghĩa: tác động và ảnh hưởng</li>
+					</ul>
+					<h4>Phương pháp học lịch sử hiệu quả:</h4>
+					<ul>
+						<li>Xây dựng sơ đồ tư duy</li>
+						<li>Liên hệ thực tế</li>
+						<li>So sánh các sự kiện</li>
+						<li>Phân tích nguyên nhân - kết quả</li>
+						<li>Ghi nhớ các mốc thời gian quan trọng</li>
+					</ul>
+					<h4>Các mối quan hệ lịch sử:</h4>
+					<ul>
+						<li>Quan hệ nhân - quả</li>
+						<li>Quan hệ thời gian</li>
+						<li>Quan hệ không gian</li>
+						<li>Quan hệ giữa các sự kiện</li>
+					</ul>
+				`
+			}
+		];
+		renderAccordion('historyAccordion', sections);
 	}
 
 	function pageExams() {
@@ -665,7 +1188,7 @@
 		document.getElementById('btnAiExam').addEventListener('click', async () => {
 			const ai = getStore(STORAGE_KEYS.ai, { openaiKey: '' });
 			if (!ai.openaiKey) { alert('Vào mục AI để nhập OpenAI API key trước.'); return; }
-			const subject = prompt('Môn (Toán/Lý)?', 'Toán'); if (!subject) return;
+			const subject = prompt('Môn (Toán/Lý/Sử)?', 'Toán'); if (!subject) return;
 			const level = '12';
 			const topic = prompt('Chủ đề (ví dụ: đạo hàm, điện trường,...)', 'đạo hàm'); if (!topic) return;
 			const countStr = prompt('Số câu hỏi?', '5') || '5';
@@ -812,6 +1335,7 @@
 		groups: pageGroups,
 		math: pageMath,
 		physics: pagePhysics,
+		history: pageHistory,
 		exams: pageExams,
 		results: pageResults,
 		ai: pageAI,
