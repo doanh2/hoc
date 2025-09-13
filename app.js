@@ -10,7 +10,8 @@
 		groups: 'spa_groups',
 		exams: 'spa_exams',
 		results: 'spa_results',
-		ai: 'spa_ai'
+		ai: 'spa_ai',
+		documents: 'spa_documents'
 	};
 
 	function getStore(key, fallback) {
@@ -27,6 +28,7 @@
 	if (!getStore(STORAGE_KEYS.exams)) setStore(STORAGE_KEYS.exams, []);
 	if (!getStore(STORAGE_KEYS.results)) setStore(STORAGE_KEYS.results, []);
 	if (!getStore(STORAGE_KEYS.ai)) setStore(STORAGE_KEYS.ai, { openaiKey: '' });
+	if (!getStore(STORAGE_KEYS.documents)) setStore(STORAGE_KEYS.documents, []);
 
 	function currentUser() {
 		const session = getStore(STORAGE_KEYS.session);
@@ -1135,6 +1137,267 @@
 		renderAccordion('historyAccordion', sections);
 	}
 
+	function pageDocuments() {
+		const user = currentUser(); if (!user) { navigate('login'); return; }
+		const documents = getStore(STORAGE_KEYS.documents, []);
+		
+		app.innerHTML = `
+			<section class="panel">
+				<div class="flex">
+					<h2>Tài liệu của tôi</h2>
+					<span class="right"></span>
+					<button class="btn" id="btnUpload">Upload tài liệu</button>
+				</div>
+				<div class="spacer"></div>
+				
+				<!-- Upload Form -->
+				<div id="uploadForm" class="card" style="display: none;">
+					<h4>Upload tài liệu mới</h4>
+					<form id="documentUploadForm">
+						<div class="row">
+							<label>Tên tài liệu</label>
+							<input type="text" name="title" required placeholder="Nhập tên tài liệu" />
+						</div>
+						<div class="row">
+							<label>Môn học</label>
+							<select name="subject" required>
+								<option value="">Chọn môn học</option>
+								<option value="toan">Toán</option>
+								<option value="ly">Vật lý</option>
+								<option value="su">Lịch sử</option>
+								<option value="hoa">Hóa học</option>
+								<option value="sinh">Sinh học</option>
+								<option value="van">Ngữ văn</option>
+								<option value="anh">Tiếng Anh</option>
+								<option value="khac">Khác</option>
+							</select>
+						</div>
+						<div class="row">
+							<label>Loại tài liệu</label>
+							<select name="type" required>
+								<option value="">Chọn loại</option>
+								<option value="bai-giang">Bài giảng</option>
+								<option value="de-thi">Đề thi</option>
+								<option value="tai-lieu-tham-khao">Tài liệu tham khảo</option>
+								<option value="so-do-tu-duy">Sơ đồ tư duy</option>
+								<option value="tom-tat">Tóm tắt</option>
+								<option value="khac">Khác</option>
+							</select>
+						</div>
+						<div class="row">
+							<label>Mô tả (tùy chọn)</label>
+							<textarea name="description" placeholder="Mô tả ngắn về tài liệu"></textarea>
+						</div>
+						<div class="row">
+							<label>Chọn file</label>
+							<input type="file" name="file" required accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif" />
+							<small class="muted">Hỗ trợ: PDF, DOC, DOCX, TXT, JPG, PNG (tối đa 10MB)</small>
+						</div>
+						<div class="flex">
+							<button type="submit" class="btn">Upload</button>
+							<button type="button" class="btn secondary" id="cancelUpload">Hủy</button>
+						</div>
+					</form>
+				</div>
+				
+				<!-- Documents List -->
+				<div id="documentsList" class="grid cols-2"></div>
+			</section>
+		`;
+
+		function render() {
+			const list = document.getElementById('documentsList');
+			const myDocs = documents.filter(d => d.ownerId === user.id).sort((a,b) => b.createdAt - a.createdAt);
+			
+			if (myDocs.length === 0) {
+				list.innerHTML = `
+					<div class="card" style="grid-column: 1/-1; text-align: center; padding: 40px;">
+						<h4>Chưa có tài liệu nào</h4>
+						<p class="muted">Hãy upload tài liệu đầu tiên của bạn!</p>
+						<button class="btn" onclick="document.getElementById('btnUpload').click()">Upload ngay</button>
+					</div>
+				`;
+				return;
+			}
+
+			list.innerHTML = myDocs.map(doc => `
+				<div class="card">
+					<div class="flex">
+						<div style="flex: 1;">
+							<h4>${doc.title}</h4>
+							<p class="muted">Môn: ${getSubjectName(doc.subject)}</p>
+							<p class="muted">Loại: ${getTypeName(doc.type)}</p>
+							${doc.description ? `<p class="muted">${doc.description}</p>` : ''}
+							<p class="muted">Ngày: ${new Date(doc.createdAt).toLocaleDateString('vi-VN')}</p>
+							<p class="muted">Kích thước: ${formatFileSize(doc.size)}</p>
+						</div>
+						<div class="flex" style="flex-direction: column; gap: 4px;">
+							<button class="btn secondary" data-view="${doc.id}">Xem</button>
+							<button class="btn" data-download="${doc.id}">Tải về</button>
+							<button class="btn danger" data-delete="${doc.id}">Xóa</button>
+						</div>
+					</div>
+				</div>
+			`).join('');
+
+			// Event listeners
+			list.querySelectorAll('[data-view]').forEach(btn => {
+				btn.addEventListener('click', () => viewDocument(btn.getAttribute('data-view')));
+			});
+			list.querySelectorAll('[data-download]').forEach(btn => {
+				btn.addEventListener('click', () => downloadDocument(btn.getAttribute('data-download')));
+			});
+			list.querySelectorAll('[data-delete]').forEach(btn => {
+				btn.addEventListener('click', () => deleteDocument(btn.getAttribute('data-delete')));
+			});
+		}
+
+		function getSubjectName(subject) {
+			const subjects = {
+				'toan': 'Toán',
+				'ly': 'Vật lý', 
+				'su': 'Lịch sử',
+				'hoa': 'Hóa học',
+				'sinh': 'Sinh học',
+				'van': 'Ngữ văn',
+				'anh': 'Tiếng Anh',
+				'khac': 'Khác'
+			};
+			return subjects[subject] || subject;
+		}
+
+		function getTypeName(type) {
+			const types = {
+				'bai-giang': 'Bài giảng',
+				'de-thi': 'Đề thi',
+				'tai-lieu-tham-khao': 'Tài liệu tham khảo',
+				'so-do-tu-duy': 'Sơ đồ tư duy',
+				'tom-tat': 'Tóm tắt',
+				'khac': 'Khác'
+			};
+			return types[type] || type;
+		}
+
+		function formatFileSize(bytes) {
+			if (bytes === 0) return '0 Bytes';
+			const k = 1024;
+			const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+			const i = Math.floor(Math.log(bytes) / Math.log(k));
+			return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+		}
+
+		function viewDocument(docId) {
+			const doc = documents.find(d => d.id === docId);
+			if (!doc) return;
+			
+			// Tạo URL để xem file
+			const blob = new Blob([doc.content], { type: doc.mimeType });
+			const url = URL.createObjectURL(blob);
+			
+			// Mở trong tab mới
+			window.open(url, '_blank');
+			
+			// Cleanup
+			setTimeout(() => URL.revokeObjectURL(url), 1000);
+		}
+
+		function downloadDocument(docId) {
+			const doc = documents.find(d => d.id === docId);
+			if (!doc) return;
+			
+			// Tạo blob và download
+			const blob = new Blob([doc.content], { type: doc.mimeType });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = doc.filename;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+		}
+
+		function deleteDocument(docId) {
+			if (!confirm('Bạn có chắc muốn xóa tài liệu này?')) return;
+			
+			const index = documents.findIndex(d => d.id === docId);
+			if (index === -1) return;
+			
+			documents.splice(index, 1);
+			setStore(STORAGE_KEYS.documents, documents);
+			render();
+		}
+
+		// Upload form handlers
+		document.getElementById('btnUpload').addEventListener('click', () => {
+			document.getElementById('uploadForm').style.display = 'block';
+		});
+
+		document.getElementById('cancelUpload').addEventListener('click', () => {
+			document.getElementById('uploadForm').style.display = 'none';
+			document.getElementById('documentUploadForm').reset();
+		});
+
+		document.getElementById('documentUploadForm').addEventListener('submit', async (e) => {
+			e.preventDefault();
+			const formData = new FormData(e.target);
+			const file = formData.get('file');
+			
+			if (!file || file.size === 0) {
+				alert('Vui lòng chọn file');
+				return;
+			}
+			
+			if (file.size > 10 * 1024 * 1024) { // 10MB limit
+				alert('File quá lớn. Vui lòng chọn file nhỏ hơn 10MB');
+				return;
+			}
+
+			try {
+				// Convert file to base64 for storage
+				const content = await fileToBase64(file);
+				
+				const newDoc = {
+					id: uid(),
+					title: formData.get('title').trim(),
+					subject: formData.get('subject'),
+					type: formData.get('type'),
+					description: formData.get('description').trim(),
+					filename: file.name,
+					mimeType: file.type,
+					size: file.size,
+					content: content,
+					ownerId: user.id,
+					createdAt: Date.now()
+				};
+
+				documents.push(newDoc);
+				setStore(STORAGE_KEYS.documents, documents);
+				
+				document.getElementById('uploadForm').style.display = 'none';
+				document.getElementById('documentUploadForm').reset();
+				render();
+				
+				alert('Upload tài liệu thành công!');
+			} catch (error) {
+				console.error('Upload error:', error);
+				alert('Có lỗi xảy ra khi upload file. Vui lòng thử lại.');
+			}
+		});
+
+		// Helper function to convert file to base64
+		function fileToBase64(file) {
+			return new Promise((resolve, reject) => {
+				const reader = new FileReader();
+				reader.onload = () => resolve(reader.result);
+				reader.onerror = reject;
+				reader.readAsDataURL(file);
+			});
+		}
+
+		render();
+	}
+
 	function pageExams() {
 		const user = currentUser(); if (!user) { navigate('login'); return; }
 		const exams = getStore(STORAGE_KEYS.exams, []);
@@ -1337,6 +1600,7 @@
 		physics: pagePhysics,
 		history: pageHistory,
 		exams: pageExams,
+		documents: pageDocuments,
 		results: pageResults,
 		ai: pageAI,
 	};
