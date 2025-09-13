@@ -11,7 +11,20 @@
 		exams: 'spa_exams',
 		results: 'spa_results',
 		ai: 'spa_ai',
-		documents: 'spa_documents'
+		documents: 'spa_documents',
+		sync: 'spa_sync'
+	};
+
+	// Cấu hình đồng bộ dữ liệu
+	const SYNC_CONFIG = {
+		apiUrl: 'https://api.jsonbin.io/v3/b',
+		apiKey: '$2a$10$abc123def456ghi789jkl012mno345pqr678stu901vwx234yz', // API key mẫu
+		bins: {
+			users: '65f1234567890abcdef12345',
+			exams: '65f1234567890abcdef12346', 
+			documents: '65f1234567890abcdef12347',
+			results: '65f1234567890abcdef12348'
+		}
 	};
 
 	function getStore(key, fallback) {
@@ -20,7 +33,88 @@
 			return raw ? JSON.parse(raw) : (fallback ?? null);
 		} catch (_) { return fallback ?? null; }
 	}
-	function setStore(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+	function setStore(key, value) { 
+		localStorage.setItem(key, JSON.stringify(value)); 
+		// Tự động đồng bộ dữ liệu quan trọng
+		if (['users', 'exams', 'documents', 'results'].includes(key)) {
+			syncToCloud(key, value);
+		}
+	}
+
+	// Hàm đồng bộ dữ liệu lên cloud
+	async function syncToCloud(key, data) {
+		try {
+			const binId = SYNC_CONFIG.bins[key];
+			if (!binId) return;
+
+			const response = await fetch(`${SYNC_CONFIG.apiUrl}/${binId}`, {
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					'X-Master-Key': SYNC_CONFIG.apiKey
+				},
+				body: JSON.stringify(data)
+			});
+
+			if (response.ok) {
+				console.log(`✅ Đồng bộ ${key} thành công`);
+				// Lưu thời gian sync cuối
+				const syncData = getStore(STORAGE_KEYS.sync, {});
+				syncData[key] = { lastSync: Date.now(), status: 'success' };
+				localStorage.setItem(STORAGE_KEYS.sync, JSON.stringify(syncData));
+			}
+		} catch (error) {
+			console.error(`❌ Lỗi đồng bộ ${key}:`, error);
+		}
+	}
+
+	// Hàm tải dữ liệu từ cloud
+	async function syncFromCloud(key) {
+		try {
+			const binId = SYNC_CONFIG.bins[key];
+			if (!binId) return null;
+
+			const response = await fetch(`${SYNC_CONFIG.apiUrl}/${binId}/latest`, {
+				headers: {
+					'X-Master-Key': SYNC_CONFIG.apiKey
+				}
+			});
+
+			if (response.ok) {
+				const result = await response.json();
+				const data = result.record;
+				
+				// Lưu vào localStorage
+				localStorage.setItem(key, JSON.stringify(data));
+				
+				// Cập nhật trạng thái sync
+				const syncData = getStore(STORAGE_KEYS.sync, {});
+				syncData[key] = { lastSync: Date.now(), status: 'success' };
+				localStorage.setItem(STORAGE_KEYS.sync, JSON.stringify(syncData));
+				
+				console.log(`✅ Tải ${key} từ cloud thành công`);
+				return data;
+			}
+		} catch (error) {
+			console.error(`❌ Lỗi tải ${key} từ cloud:`, error);
+		}
+		return null;
+	}
+
+	// Hàm đồng bộ tất cả dữ liệu
+	async function syncAllData() {
+		const syncPromises = ['users', 'exams', 'documents', 'results'].map(key => 
+			syncFromCloud(STORAGE_KEYS[key])
+		);
+		
+		try {
+			await Promise.all(syncPromises);
+			return true;
+		} catch (error) {
+			console.error('❌ Lỗi đồng bộ tất cả dữ liệu:', error);
+			return false;
+		}
+	}
 
 	// Seed data if empty
 	const users = getStore(STORAGE_KEYS.users, []);
@@ -76,6 +170,7 @@
 					<ul>
 						<li><strong>Kiến thức:</strong> Toán 12, Vật lý 12, Lịch sử 12 (xem trực tiếp)</li>
 						<li><strong>Thư viện tài liệu:</strong> Xem và tải về tài liệu từ cộng đồng (miễn phí)</li>
+						<li><strong>Đồng bộ dữ liệu:</strong> Dữ liệu được đồng bộ tự động giữa các thiết bị (cần đăng nhập)</li>
 						<li><strong>Tạo đề thi:</strong> Tạo đề thủ công hoặc bằng AI (cần đăng nhập)</li>
 						<li><strong>Upload tài liệu:</strong> Chia sẻ tài liệu với cộng đồng (cần đăng nhập)</li>
 						<li><strong>Bảng thành tích:</strong> Theo dõi kết quả học tập (cần đăng nhập)</li>
@@ -1770,6 +1865,180 @@
 		});
 	}
 
+	function pageSync() {
+		const user = currentUser(); if (!user) { navigate('login'); return; }
+		const syncData = getStore(STORAGE_KEYS.sync, {});
+		
+		app.innerHTML = `
+			<section class="panel">
+				<h2>🔄 Quản lý đồng bộ dữ liệu</h2>
+				<p class="muted">Đồng bộ dữ liệu giữa các thiết bị và tài khoản</p>
+				<div class="spacer"></div>
+				
+				<!-- Sync Status -->
+				<div class="card">
+					<h4>📊 Trạng thái đồng bộ</h4>
+					<div id="syncStatus" class="grid cols-2">
+						<!-- Sẽ được cập nhật bằng JavaScript -->
+					</div>
+				</div>
+				<div class="spacer"></div>
+				
+				<!-- Sync Controls -->
+				<div class="card">
+					<h4>🎛️ Điều khiển đồng bộ</h4>
+					<div class="flex">
+						<button class="btn" id="btnSyncAll">🔄 Đồng bộ tất cả</button>
+						<button class="btn secondary" id="btnCheckStatus">🔍 Kiểm tra trạng thái</button>
+						<button class="btn danger" id="btnResetSync">🗑️ Xóa cache đồng bộ</button>
+					</div>
+				</div>
+				<div class="spacer"></div>
+				
+				<!-- Manual Sync -->
+				<div class="card">
+					<h4>📤 Đồng bộ thủ công</h4>
+					<div class="grid cols-2">
+						<div>
+							<h5>📤 Upload lên cloud</h5>
+							<div class="flex">
+								<button class="btn secondary" data-sync-up="users">👥 Người dùng</button>
+								<button class="btn secondary" data-sync-up="exams">📝 Đề thi</button>
+								<button class="btn secondary" data-sync-up="documents">📚 Tài liệu</button>
+								<button class="btn secondary" data-sync-up="results">🏆 Kết quả</button>
+							</div>
+						</div>
+						<div>
+							<h5>📥 Tải từ cloud</h5>
+							<div class="flex">
+								<button class="btn" data-sync-down="users">👥 Người dùng</button>
+								<button class="btn" data-sync-down="exams">📝 Đề thi</button>
+								<button class="btn" data-sync-down="documents">📚 Tài liệu</button>
+								<button class="btn" data-sync-down="results">🏆 Kết quả</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="spacer"></div>
+				
+				<!-- Instructions -->
+				<div class="card">
+					<h4>💡 Hướng dẫn sử dụng</h4>
+					<ul>
+						<li><strong>Đồng bộ tự động:</strong> Dữ liệu được đồng bộ tự động khi bạn tạo/sửa/xóa</li>
+						<li><strong>Đồng bộ thủ công:</strong> Sử dụng khi muốn cập nhật dữ liệu ngay lập tức</li>
+						<li><strong>Đồng bộ tất cả:</strong> Tải tất cả dữ liệu mới nhất từ cloud</li>
+						<li><strong>Lưu ý:</strong> Đồng bộ cần kết nối internet ổn định</li>
+					</ul>
+				</div>
+			</section>
+		`;
+
+		function updateSyncStatus() {
+			const statusDiv = document.getElementById('syncStatus');
+			const keys = ['users', 'exams', 'documents', 'results'];
+			
+			statusDiv.innerHTML = keys.map(key => {
+				const data = syncData[key] || {};
+				const lastSync = data.lastSync ? new Date(data.lastSync).toLocaleString('vi-VN') : 'Chưa đồng bộ';
+				const status = data.status === 'success' ? '✅' : '❌';
+				
+				return `
+					<div class="card">
+						<h5>${getKeyDisplayName(key)} ${status}</h5>
+						<p class="muted">Lần cuối: ${lastSync}</p>
+						<p class="muted">Trạng thái: ${data.status || 'Chưa biết'}</p>
+					</div>
+				`;
+			}).join('');
+		}
+
+		function getKeyDisplayName(key) {
+			const names = {
+				users: '👥 Người dùng',
+				exams: '📝 Đề thi', 
+				documents: '📚 Tài liệu',
+				results: '🏆 Kết quả'
+			};
+			return names[key] || key;
+		}
+
+		// Event listeners
+		document.getElementById('btnSyncAll').addEventListener('click', async () => {
+			const btn = document.getElementById('btnSyncAll');
+			btn.textContent = '⏳ Đang đồng bộ...';
+			btn.disabled = true;
+			
+			const success = await syncAllData();
+			
+			btn.textContent = success ? '✅ Hoàn thành' : '❌ Lỗi';
+			btn.disabled = false;
+			
+			setTimeout(() => {
+				btn.textContent = '🔄 Đồng bộ tất cả';
+			}, 2000);
+			
+			updateSyncStatus();
+		});
+
+		document.getElementById('btnCheckStatus').addEventListener('click', () => {
+			updateSyncStatus();
+			alert('Đã cập nhật trạng thái đồng bộ!');
+		});
+
+		document.getElementById('btnResetSync').addEventListener('click', () => {
+			if (confirm('Bạn có chắc muốn xóa cache đồng bộ? Điều này sẽ không ảnh hưởng đến dữ liệu của bạn.')) {
+				localStorage.removeItem(STORAGE_KEYS.sync);
+				updateSyncStatus();
+				alert('Đã xóa cache đồng bộ!');
+			}
+		});
+
+		// Manual sync buttons
+		document.querySelectorAll('[data-sync-up]').forEach(btn => {
+			btn.addEventListener('click', async () => {
+				const key = btn.getAttribute('data-sync-up');
+				const data = getStore(STORAGE_KEYS[key], []);
+				
+				btn.textContent = '⏳ Đang upload...';
+				btn.disabled = true;
+				
+				await syncToCloud(STORAGE_KEYS[key], data);
+				
+				btn.textContent = '✅ Hoàn thành';
+				setTimeout(() => {
+					btn.textContent = getKeyDisplayName(key);
+					btn.disabled = false;
+				}, 2000);
+				
+				updateSyncStatus();
+			});
+		});
+
+		document.querySelectorAll('[data-sync-down]').forEach(btn => {
+			btn.addEventListener('click', async () => {
+				const key = btn.getAttribute('data-sync-down');
+				
+				btn.textContent = '⏳ Đang tải...';
+				btn.disabled = true;
+				
+				const data = await syncFromCloud(STORAGE_KEYS[key]);
+				
+				btn.textContent = data ? '✅ Hoàn thành' : '❌ Lỗi';
+				setTimeout(() => {
+					btn.textContent = getKeyDisplayName(key);
+					btn.disabled = false;
+				}, 2000);
+				
+				updateSyncStatus();
+			});
+		});
+
+		// Auto sync on page load
+		syncAllData();
+		updateSyncStatus();
+	}
+
 	function aggregateLeaderboard(results, exams) {
 		const users = getStore(STORAGE_KEYS.users, []);
 		const map = new Map();
@@ -1794,6 +2063,7 @@
 		documents: pageDocuments,
 		results: pageResults,
 		ai: pageAI,
+		sync: pageSync,
 	};
 
 	function handleRoute() {
@@ -1818,6 +2088,13 @@
 	window.addEventListener('hashchange', handleRoute);
 	updateNavAuthState();
 	handleRoute();
+	
+	// Auto sync on app start
+	window.addEventListener('load', async () => {
+		console.log('🔄 Đang đồng bộ dữ liệu...');
+		await syncAllData();
+		console.log('✅ Hoàn thành đồng bộ dữ liệu');
+	});
 })();
 
 
