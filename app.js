@@ -75,9 +75,10 @@
 					<h4>🚀 Tính năng chính:</h4>
 					<ul>
 						<li><strong>Kiến thức:</strong> Toán 12, Vật lý 12, Lịch sử 12 (xem trực tiếp)</li>
-						<li><strong>Tạo đề thi:</strong> Tạo đề thủ công hoặc bằng AI</li>
-						<li><strong>Tài liệu:</strong> Upload và quản lý tài liệu học tập</li>
-						<li><strong>Bảng thành tích:</strong> Theo dõi kết quả học tập</li>
+						<li><strong>Thư viện tài liệu:</strong> Xem và tải về tài liệu từ cộng đồng (miễn phí)</li>
+						<li><strong>Tạo đề thi:</strong> Tạo đề thủ công hoặc bằng AI (cần đăng nhập)</li>
+						<li><strong>Upload tài liệu:</strong> Chia sẻ tài liệu với cộng đồng (cần đăng nhập)</li>
+						<li><strong>Bảng thành tích:</strong> Theo dõi kết quả học tập (cần đăng nhập)</li>
 					</ul>
 				</div>
 				<div class="spacer"></div>
@@ -1134,6 +1135,199 @@
 		renderAccordion('historyAccordion', sections);
 	}
 
+	function pageLibrary() {
+		const documents = getStore(STORAGE_KEYS.documents, []);
+		const users = getStore(STORAGE_KEYS.users, []);
+		
+		app.innerHTML = `
+			<section class="panel">
+				<h2>📚 Thư viện tài liệu</h2>
+				<p class="muted">Khám phá và tải về các tài liệu học tập từ cộng đồng</p>
+				<div class="spacer"></div>
+				
+				<!-- Filter Controls -->
+				<div class="card">
+					<div class="flex">
+						<div class="row" style="flex: 1; margin: 0;">
+							<label>Lọc theo môn học:</label>
+							<select id="subjectFilter">
+								<option value="">Tất cả môn</option>
+								<option value="toan">Toán</option>
+								<option value="ly">Vật lý</option>
+								<option value="su">Lịch sử</option>
+								<option value="hoa">Hóa học</option>
+								<option value="sinh">Sinh học</option>
+								<option value="van">Ngữ văn</option>
+								<option value="anh">Tiếng Anh</option>
+								<option value="khac">Khác</option>
+							</select>
+						</div>
+						<div class="row" style="flex: 1; margin: 0;">
+							<label>Lọc theo loại:</label>
+							<select id="typeFilter">
+								<option value="">Tất cả loại</option>
+								<option value="bai-giang">Bài giảng</option>
+								<option value="de-thi">Đề thi</option>
+								<option value="tai-lieu-tham-khao">Tài liệu tham khảo</option>
+								<option value="so-do-tu-duy">Sơ đồ tư duy</option>
+								<option value="tom-tat">Tóm tắt</option>
+								<option value="khac">Khác</option>
+							</select>
+						</div>
+						<div class="row" style="flex: 1; margin: 0;">
+							<label>Tìm kiếm:</label>
+							<input type="text" id="searchInput" placeholder="Tìm theo tên tài liệu..." />
+						</div>
+					</div>
+				</div>
+				<div class="spacer"></div>
+				
+				<!-- Documents Grid -->
+				<div id="libraryList" class="grid cols-2"></div>
+			</section>
+		`;
+
+		let filteredDocs = documents;
+
+		function getSubjectName(subject) {
+			const subjects = {
+				'toan': 'Toán',
+				'ly': 'Vật lý', 
+				'su': 'Lịch sử',
+				'hoa': 'Hóa học',
+				'sinh': 'Sinh học',
+				'van': 'Ngữ văn',
+				'anh': 'Tiếng Anh',
+				'khac': 'Khác'
+			};
+			return subjects[subject] || subject;
+		}
+
+		function getTypeName(type) {
+			const types = {
+				'bai-giang': 'Bài giảng',
+				'de-thi': 'Đề thi',
+				'tai-lieu-tham-khao': 'Tài liệu tham khảo',
+				'so-do-tu-duy': 'Sơ đồ tư duy',
+				'tom-tat': 'Tóm tắt',
+				'khac': 'Khác'
+			};
+			return types[type] || type;
+		}
+
+		function formatFileSize(bytes) {
+			if (bytes === 0) return '0 Bytes';
+			const k = 1024;
+			const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+			const i = Math.floor(Math.log(bytes) / Math.log(k));
+			return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+		}
+
+		function getUserName(userId) {
+			const user = users.find(u => u.id === userId);
+			return user ? user.name : 'Người dùng ẩn danh';
+		}
+
+		function applyFilters() {
+			const subjectFilter = document.getElementById('subjectFilter').value;
+			const typeFilter = document.getElementById('typeFilter').value;
+			const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+
+			filteredDocs = documents.filter(doc => {
+				const matchesSubject = !subjectFilter || doc.subject === subjectFilter;
+				const matchesType = !typeFilter || doc.type === typeFilter;
+				const matchesSearch = !searchTerm || doc.title.toLowerCase().includes(searchTerm);
+				
+				return matchesSubject && matchesType && matchesSearch;
+			});
+
+			render();
+		}
+
+		function viewDocument(docId) {
+			const doc = documents.find(d => d.id === docId);
+			if (!doc) return;
+			
+			// Tạo URL để xem file
+			const blob = new Blob([doc.content], { type: doc.mimeType });
+			const url = URL.createObjectURL(blob);
+			
+			// Mở trong tab mới
+			window.open(url, '_blank');
+			
+			// Cleanup
+			setTimeout(() => URL.revokeObjectURL(url), 1000);
+		}
+
+		function downloadDocument(docId) {
+			const doc = documents.find(d => d.id === docId);
+			if (!doc) return;
+			
+			// Tạo blob và download
+			const blob = new Blob([doc.content], { type: doc.mimeType });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = doc.filename;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+		}
+
+		function render() {
+			const list = document.getElementById('libraryList');
+			
+			if (filteredDocs.length === 0) {
+				list.innerHTML = `
+					<div class="card" style="grid-column: 1/-1; text-align: center; padding: 40px;">
+						<h4>Không tìm thấy tài liệu nào</h4>
+						<p class="muted">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+					</div>
+				`;
+				return;
+			}
+
+			// Sắp xếp theo thời gian mới nhất
+			const sortedDocs = filteredDocs.sort((a, b) => b.createdAt - a.createdAt);
+
+			list.innerHTML = sortedDocs.map(doc => `
+				<div class="card">
+					<div class="flex">
+						<div style="flex: 1;">
+							<h4>${doc.title}</h4>
+							<p class="muted">📚 Môn: ${getSubjectName(doc.subject)}</p>
+							<p class="muted">📄 Loại: ${getTypeName(doc.type)}</p>
+							${doc.description ? `<p class="muted">💭 ${doc.description}</p>` : ''}
+							<p class="muted">👤 Tác giả: ${getUserName(doc.ownerId)}</p>
+							<p class="muted">📅 Ngày: ${new Date(doc.createdAt).toLocaleDateString('vi-VN')}</p>
+							<p class="muted">💾 Kích thước: ${formatFileSize(doc.size)}</p>
+						</div>
+						<div class="flex" style="flex-direction: column; gap: 4px;">
+							<button class="btn secondary" data-view="${doc.id}">👁️ Xem</button>
+							<button class="btn" data-download="${doc.id}">⬇️ Tải về</button>
+						</div>
+					</div>
+				</div>
+			`).join('');
+
+			// Event listeners
+			list.querySelectorAll('[data-view]').forEach(btn => {
+				btn.addEventListener('click', () => viewDocument(btn.getAttribute('data-view')));
+			});
+			list.querySelectorAll('[data-download]').forEach(btn => {
+				btn.addEventListener('click', () => downloadDocument(btn.getAttribute('data-download')));
+			});
+		}
+
+		// Event listeners for filters
+		document.getElementById('subjectFilter').addEventListener('change', applyFilters);
+		document.getElementById('typeFilter').addEventListener('change', applyFilters);
+		document.getElementById('searchInput').addEventListener('input', applyFilters);
+
+		render();
+	}
+
 	function pageDocuments() {
 		const user = currentUser(); if (!user) { navigate('login'); return; }
 		const documents = getStore(STORAGE_KEYS.documents, []);
@@ -1595,6 +1789,7 @@
 		math: pageMath,
 		physics: pagePhysics,
 		history: pageHistory,
+		library: pageLibrary,
 		exams: pageExams,
 		documents: pageDocuments,
 		results: pageResults,
